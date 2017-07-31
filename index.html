@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <body>
+        <h1 id='ville'></h1>
+        <p id='weather'></p>
+        <div id='icon'></div>
+        <form action="" , method="GET">
+            <select id='lang'>
+<option value="en">Anglais</option> 
+  <option value="fr" >Français</option>
+  <option value="de">Allemand</option>
+  </select>
+            <input type='text' id='city'>
+            <input type='button' id='send' value='Send'>
+            <p>
+                <form action="">
+                    <input type="radio" name="country" value="fr"> France<br>
+                    <input type="radio" name="country" value="en"> Angleterre<br>
+                    <input type="radio" name="country" value="de"> Allemagne
+                </form>
+            </p>
+        </form>
+
+
+
+        <script>
+            let city = document.querySelector('#city');
+
+            const appID = '2cc7d408f527de19889ec31f5c22aa33';
+            document.querySelector('#send').addEventListener('click', function(e) {
+                e.preventDefault();
+                let lang = document.getElementById('lang').value;
+                let radios = document.getElementsByName('country');
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        lang = radios[i].value;
+                    }
+                }
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'http://api.openweathermap.org/data/2.5/weather?q=' + city.value + '&lang=' + lang + '&APPID=' + appID, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            console.log(xhr.response);
+                            document.querySelector('#ville').innerHTML = JSON.parse(xhr.responseText).name;
+                            document.querySelector('#weather').innerHTML = JSON.parse(xhr.responseText).weather[0].description;
+                            document.querySelector('#icon').innerHTML = '<img src="http://openweathermap.org/img/w/' + JSON.parse(xhr.responseText).weather[0].icon + '.png">';
+                        } else {
+                            console.error('unexpected status code:', this.status)
+                        }
+                    }
+                };
+                xhr.send(null);
+            });
+        </script>
+    </body>
+
+</html>
